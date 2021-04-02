@@ -36,10 +36,10 @@ not typed are converted to type T. This model has the following parameters and d
 @with_kw struct CIB_Planck2013{T<:Real} <: AbstractCIBModel{T} @deftype T
     nside::Int64    = 4096
     hod::String     = "shang"
-    Inu_norm     = 1e-10
+    Inu_norm     = 0.3180384
     min_redshift = 0.0
-    max_redshift = 5.0
-    min_mass     = 1e12
+    max_redshift = 6.0
+    min_mass     = 2e10
     box_size     = 40000
 
     # shang HOD
@@ -376,4 +376,43 @@ function paint!(result_map::Map{T,RingOrder},
         fluxes_cen, fluxes_sat)
 
     return fluxes_cen, fluxes_sat
+end
+
+
+
+
+"""
+    estimate_fluxes!(  nu_obs, model, sources, fluxes_cen, fluxes_sat)
+
+Paint a source catalog onto a map, recording the fluxes in
+`fluxes_cen` and `fluxes_sat`.
+
+# Arguments:
+- `nu_obs`: frequency in Hz
+- `model::AbstractCIBModel{T}`: source model parameters
+- `sources`: NamedTuple containing source information from generate_sources
+- `fluxes_cen::AbstractArray`: buffer for writing fluxes of centrals
+- `fluxes_sat::AbstractArray`: buffer for writing fluxes of satellites
+"""
+function estimate_fluxes!( 
+        nu_obs, model::AbstractCIBModel{T}, sources,
+        fluxes_cen::AbstractArray, fluxes_sat::AbstractArray)  where T 
+
+    # process centrals for this frequency
+    Threads.@threads for i in 1:sources.N_cen
+        nu = (one(T) + sources.redshift_cen[i]) * nu_obs
+        fluxes_cen[i] = l2f(
+            sources.lum_cen[i] * nu2theta(
+                nu, sources.redshift_cen[i], model),
+            sources.dist_cen[i], sources.redshift_cen[i])
+    end
+
+    # process satellites for this frequency
+    Threads.@threads for i in 1:sources.N_sat
+        nu = (one(T) + sources.redshift_sat[i]) * nu_obs
+        fluxes_sat[i] = l2f(
+            sources.lum_sat[i] * nu2theta(
+                nu, sources.redshift_sat[i], model),
+            sources.dist_sat[i], sources.redshift_sat[i])
+    end
 end
