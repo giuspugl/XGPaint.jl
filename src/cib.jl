@@ -36,7 +36,7 @@ not typed are converted to type T. This model has the following parameters and d
 @with_kw struct CIB_Planck2013{T<:Real} <: AbstractCIBModel{T} @deftype T
     nside::Int64    = 4096
     hod::String     = "shang"
-    Inu_norm     = 0.3180384
+    Inu_norm     = 1e-10
     min_redshift = 0.0
     max_redshift = 5.0
     min_mass     = 1e12
