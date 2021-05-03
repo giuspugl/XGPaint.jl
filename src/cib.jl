@@ -416,3 +416,42 @@ function estimate_fluxes!(
             sources.dist_sat[i], sources.redshift_sat[i])
     end
 end
+
+
+
+function paint_with_mask!(result_map::Map{T_map, RingOrder},
+    nu_obs, model::AbstractCIBModel{T}, sources,
+    fluxes_cen::AbstractArray, fluxes_sat::AbstractArray,
+    mask_cen::AbstractArray, mask_sat::AbstractArray)  where {T_map, T}
+
+pixel_array = result_map.pixels
+fill!(pixel_array, zero(T))  # prepare the frequency map
+    
+# process centrals for this frequency
+Threads.@threads for i in mask_cen
+    nu = (one(T) + sources.redshift_cen[i]) * nu_obs
+    fluxes_cen[i] = l2f(
+        sources.lum_cen[i] * nu2theta(
+            nu, sources.redshift_cen[i], model),
+        sources.dist_cen[i], sources.redshift_cen[i])
+    pixel_array[sources.hp_ind_cen[i]] += fluxes_cen[i]
+    
+end
+
+# process satellites for this frequency
+Threads.@threads for i in mask_sat
+    nu = (one(T) + sources.redshift_sat[i]) * nu_obs
+    fluxes_sat[i] = l2f(
+        sources.lum_sat[i] * nu2theta(
+            nu, sources.redshift_sat[i], model),
+        sources.dist_sat[i], sources.redshift_sat[i])
+    pixel_array[sources.hp_ind_sat[i]] += fluxes_sat[i]
+    
+end
+
+# divide by healpix pixel size
+per_pixel_steradian = 1 / nside2pixarea(result_map.resolution.nside)
+pixel_array .*= per_pixel_steradian
+end
+
+ 

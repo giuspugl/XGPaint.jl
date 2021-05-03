@@ -21,6 +21,6 @@ include("./radio.jl")
 
 export get_cosmology, read_halo_catalog_hdf5
 export Radio_Sehgal2009, CIB_Planck2013
-export paint!, generate_sources
+export paint!, generate_sources, paint_with_mask!, estimate_fluxes! 
 
 end # module
