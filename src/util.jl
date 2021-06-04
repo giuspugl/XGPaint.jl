@@ -136,3 +136,62 @@ function catalog2map!(m::Map{T,RingOrder}, flux, theta, phi) where T
     per_pixel_steradian = 1 / nside2pixarea(res.nside)
     pixel_array .*= per_pixel_steradian
 end
+
+
+
+
+import PhysicalConstants.CODATA2018: c_0, k_B , PlanckConstant
+
+function BlackBody(ν::Unitful.Frequency, Tbb::Unitful.Temperature; unit_out::Unitful.FreeUnits=u"Jy/sr"  )
+    hP = uconvert(u"erg/GHz",  PlanckConstant)
+    kB = uconvert(u"erg/K", k_B)
+    c = uconvert(u"cm*GHz", c_0 )
+    x = hP *ν/ (kB* Tbb )
+    emission = 2*hP * ν^3  /c^2 /(exp(x)-1 ) /1u"sr"
+    emission = uconvert(unit_out , emission   )
+    return emission
+end
+
+function BlackBody(λ::Unitful.Length, Tbb::Unitful.Temperature; unit_out::Unitful.FreeUnits=u"Jy/sr"   )
+    hP = uconvert(u"erg*s",  PlanckConstant)
+    kB = uconvert(u"erg/K", k_B)
+    c = uconvert(u"μm/s", c_0 )
+    x = hP *c/ (λ * kB* Tbb )
+    ν= uconvert(u"GHz", c/λ )
+
+    emission = ( 2hP *c^2 /λ^5 /(exp(x)-1 ) )c/ν^2  /1u"sr"
+    emission = uconvert(unit_out , emission   )
+    return emission
+
+end
+
+"""
+Fixsen et al. (1998) modeled the Galactic and interplanetary foreground emission in the FIRAS data
+to determine the spectrum of the cosmic infrared background.
+More details can be found in:
+"The Spectrum of the Extragalactic Far-Infrared Background from the COBE FIRAS Observations"
+D.J. Fixsen, et al., 1998, ApJ 508, 123
+
+We implemented multiple definition of the model depending whether we are estimating it in units
+of frequency or wavelength.
+"""
+
+function fixsen_model(x::Unitful.Frequency ;  Tbb::Unitful.Temperature=18.5u"K", unit_out::Unitful.FreeUnits=u"MJy/sr" )
+    B= BlackBody(x, Tbb )
+    z0 =100/u"cm"
+    x2 =  uconvert(u"cm*GHz", c_0 )/x
+    z =  uconvert(unit(z0), 1. /x2  )
+    model=(1.3E-5 *(z/z0 )^0.64 *B )
+    model = uconvert(unit_out , model    )
+    return model
+end
+
+function fixsen_model(x::Unitful.Length ; Tbb::Unitful.Temperature=18.5u"K", unit_out::Unitful.FreeUnits=u"MJy/sr" )
+    B= BlackBody(x, Tbb )
+    z0 =100/u"cm"
+    z =  uconvert(unit(z0), 1. /x )
+    model=(1.3E-5 *(z/z0 )^0.64 *B )
+    model = uconvert(unit_out , model    )
+
+    return model
+end

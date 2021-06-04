@@ -9,6 +9,7 @@ using Unitful, UnitfulAstro
 using Parameters
 using Random
 using Healpix
+using PhysicalConstants.CODATA2018
 
 import ThreadsX
 import Distributions
@@ -21,6 +22,6 @@ include("./radio.jl")
 
 export get_cosmology, read_halo_catalog_hdf5
 export Radio_Sehgal2009, CIB_Planck2013
-export paint!, generate_sources, paint_with_mask!, estimate_fluxes! 
-
+export paint!, generate_sources, paint_with_mask!, estimate_fluxes!
+export fixsen_model, BlackBody 
 end # module

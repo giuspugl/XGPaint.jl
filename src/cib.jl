@@ -394,9 +394,9 @@ Paint a source catalog onto a map, recording the fluxes in
 - `fluxes_cen::AbstractArray`: buffer for writing fluxes of centrals
 - `fluxes_sat::AbstractArray`: buffer for writing fluxes of satellites
 """
-function estimate_fluxes!( 
+function estimate_fluxes!(
         nu_obs, model::AbstractCIBModel{T}, sources,
-        fluxes_cen::AbstractArray, fluxes_sat::AbstractArray)  where T 
+        fluxes_cen::AbstractArray, fluxes_sat::AbstractArray)  where T
 
     # process centrals for this frequency
     Threads.@threads for i in 1:sources.N_cen
@@ -433,7 +433,7 @@ Paint a source catalog onto a map, recording the fluxes in
 - `fluxes_cen::AbstractArray`: buffer for writing fluxes of centrals
 - `fluxes_sat::AbstractArray`: buffer for writing fluxes of satellites
 - `mask_cen::AbstractArray`: buffer encoding  the index of the mask which satisfies the condition for  centrals
-- `mask_sat::AbstractArray`: buffer encoding  the index of the mask which satisfies the condition for satellites   
+- `mask_sat::AbstractArray`: buffer encoding  the index of the mask which satisfies the condition for satellites
 """
 
 function paint_with_mask!(result_map::Map{T_map, RingOrder},
@@ -443,7 +443,7 @@ function paint_with_mask!(result_map::Map{T_map, RingOrder},
 
 pixel_array = result_map.pixels
 fill!(pixel_array, zero(T))  # prepare the frequency map
-    
+
 # process centrals for this frequency
 Threads.@threads for i in mask_cen
     nu = (one(T) + sources.redshift_cen[i]) * nu_obs
@@ -452,7 +452,7 @@ Threads.@threads for i in mask_cen
             nu, sources.redshift_cen[i], model),
         sources.dist_cen[i], sources.redshift_cen[i])
     pixel_array[sources.hp_ind_cen[i]] += fluxes_cen[i]
-    
+
 end
 
 # process satellites for this frequency
@@ -463,12 +463,10 @@ Threads.@threads for i in mask_sat
             nu, sources.redshift_sat[i], model),
         sources.dist_sat[i], sources.redshift_sat[i])
     pixel_array[sources.hp_ind_sat[i]] += fluxes_sat[i]
-    
+
 end
 
 # divide by healpix pixel size
 per_pixel_steradian = 1 / nside2pixarea(result_map.resolution.nside)
 pixel_array .*= per_pixel_steradian
 end
-
- 
