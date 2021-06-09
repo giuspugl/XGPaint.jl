@@ -22,6 +22,8 @@ include("./radio.jl")
 
 export get_cosmology, read_halo_catalog_hdf5
 export Radio_Sehgal2009, CIB_Planck2013
-export paint!, generate_sources, paint_with_mask!, estimate_fluxes!
-export fixsen_model, BlackBody 
+export paint!, generate_sources
+export  paint_with_mask!, estimate_fluxes!, make_multifrequency_dataset
+export fixsen_model, BlackBody, estimate_normalization
+export read_from_hdf5, read_fluxes_hdf5, write_to_hdf5
 end # module
