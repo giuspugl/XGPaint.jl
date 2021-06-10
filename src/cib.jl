@@ -703,7 +703,7 @@ function make_multifrequency_dataset(
     for i in eachindex(ν_obs)
         ν = ustrip(uconvert(u"Hz", ν_obs[i]))
 
-        if save_μm == true
+        if output_μm == true
             λ = round(typeof(1u"μm"), lambdas[i])
             fname = replace(outputpath, "data" => "$(ustrip(λ))$(unit(λ))")
             print("Saving map at $(λ)  in $fname \n")
