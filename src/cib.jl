@@ -592,7 +592,10 @@ end
 
 
 """
-estimate_normalization
+    estimate_normalization(
+    result_map,
+    ν_ref,
+    unit_out)
 
 estimate  normalization factor   so that both the fluxes and the map have consistent monopole term with
 Fixen et al. 1998 model.
@@ -606,7 +609,7 @@ Fixen et al. 1998 model.
 """
 
 function estimate_normalization(
-    result_map::Map{T,RingOrder},
+    result_map::Map{T_map,RingOrder},
     ν_ref::Unitful.Frequency,
     unit_out::Unitful.FreeUnits,
 ) where {T}
@@ -623,7 +626,16 @@ end
 
 
 """
-make_multifrequency_dataset
+    make_multifrequency_dataset(
+    ν_obs,
+    model,
+    sources;
+    ν_ref= 857u"GHz",
+    output_μm= false,
+    normalize = false,
+    outputpath  = "./cib_data.hdf5",
+    unit_out  = u"MJy/sr",
+)
 
 This function involves many subroutines aimed at generating at multiple frequency
 a dataset of frequency maps at `nu_obs` frequencies, given the CIB model and the
@@ -670,7 +682,6 @@ function make_multifrequency_dataset(
 )
 
     m = Map{Float64,RingOrder}(model.nside)  # create a Healpix map
-
     fluxes_cen = Array{Float32,1}(undef, sources.N_cen)
     fluxes_sat = Array{Float32,1}(undef, sources.N_sat)
     if normalize
