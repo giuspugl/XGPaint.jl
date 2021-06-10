@@ -10,7 +10,7 @@ using Parameters
 using Random
 using Healpix
 using PhysicalConstants.CODATA2018
-
+using StatsBase
 import ThreadsX
 import Distributions
 
