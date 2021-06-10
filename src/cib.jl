@@ -609,7 +609,7 @@ Fixen et al. 1998 model.
 """
 
 function estimate_normalization(
-    result_map::Map{T_map,RingOrder},
+    result_map::Map{T,RingOrder},
     ν_ref::Unitful.Frequency,
     unit_out::Unitful.FreeUnits,
 ) where {T}
