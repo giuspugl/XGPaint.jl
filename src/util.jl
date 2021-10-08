@@ -233,6 +233,7 @@ function write_to_hdf5(filename, fluxes_cen, fluxes_sat)
     write(hdata, "fluxes_sat", fluxes_sat)
     close(hdata)
 end
+
 function write_to_hdf5(filename, fluxes_cen, fluxes_sat, sources)
     hdata = h5open(filename, "w")
 
@@ -247,6 +248,7 @@ function write_to_hdf5(filename, fluxes_cen, fluxes_sat, sources)
     write(hdata, "lum_sat", sources.lum_sat)
     close(hdata)
 end
+
 function write_to_hdf5(filename, fluxes_cen, fluxes_sat, sources, m)
     hdata = h5open(filename, "w")
 
@@ -254,10 +256,12 @@ function write_to_hdf5(filename, fluxes_cen, fluxes_sat, sources, m)
 
     write(hdata, "fluxes_sat", fluxes_sat)
     write(hdata, "redshift_cen", sources.redshift_cen)
-
     write(hdata, "redshift_sat", sources.redshift_sat)
-    write(hdata, "lum_cen", sources.lum_cen)
 
+    write(hdata, "healpix_index_cen", sources.hp_ind_cen)
+    write(hdata, "healpix_index_sat", sources.hp_ind_sat)
+
+    write(hdata, "lum_cen", sources.lum_cen)
     write(hdata, "lum_sat", sources.lum_sat)
     write(hdata, "healpix_map", m)
 
