@@ -728,7 +728,7 @@ function make_multifrequency_dataset(
             fluxes_sat *= L0
             m.pixels *= L0
         end
-        write_to_hdf5(fname, fluxes_cen, fluxes_sat, sources, m.pixels)
+        write_to_hdf5(fname, fluxes_cen, fluxes_sat, sources, m)
 
     end
 

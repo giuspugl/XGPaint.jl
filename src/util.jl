@@ -257,13 +257,15 @@ function write_to_hdf5(filename, fluxes_cen, fluxes_sat, sources, m)
     write(hdata, "fluxes_sat", fluxes_sat)
     write(hdata, "redshift_cen", sources.redshift_cen)
     write(hdata, "redshift_sat", sources.redshift_sat)
-
-    write(hdata, "healpix_index_cen", sources.hp_ind_cen)
-    write(hdata, "healpix_index_sat", sources.hp_ind_sat)
-
+    colat_cen , lon_cen = Healpix.pix2ang(m , sources.hp_ind_cen)
+    colat_sat , lon_sat = Healpix.pix2ang(m , sources.hp_ind_sat)
+    write(hdata, "LON_cen", lon_cen)
+    write(hdata, "LON_sat", lon_sat)
+    write(hdata, "LAT_cen", colat_cen)
+    write(hdata, "LAT_sat", colat_sat)
     write(hdata, "lum_cen", sources.lum_cen)
     write(hdata, "lum_sat", sources.lum_sat)
-    write(hdata, "healpix_map", m)
+    #write(hdata, "healpix_map", m.pixels)
 
     close(hdata)
 end
