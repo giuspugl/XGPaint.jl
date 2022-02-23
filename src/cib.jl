@@ -46,7 +46,7 @@ not typed are converted to type T. This model has the following parameters and d
     # shang HOD
     shang_zplat = 2.0
     shang_Td = 20.7
-    shang_beta = 1.6
+    shang_beta = 1. #1.6
     shang_eta = 2.4
     shang_alpha = 0.2
     shang_Mpeak = 10^12.3
