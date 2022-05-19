@@ -46,7 +46,7 @@ not typed are converted to type T. This model has the following parameters and d
     # shang HOD
     shang_zplat = 2.0
     shang_Td = 20.7
-    shang_beta = 1. #1.6
+    shang_beta = 1.6
     shang_eta = 2.4
     shang_alpha = 0.2
     shang_Mpeak = 10^12.3
@@ -120,14 +120,20 @@ function sigma_cen(m::T, model::AbstractCIBModel) where {T}
     ) / sqrt(T(2π) * model.shang_sigmaM)
 end
 
-function nu2theta(nu::T, z::T, model::AbstractCIBModel) where {T}
+function nu2theta_old(nu::T, z::T, model::AbstractCIBModel) where {T}
     phys_h = T(6.62606957e-27)   # erg.s
     phys_k = T(1.3806488e-16)    # erg/K
     Td = model.shang_Td * (one(T) + z)^model.shang_alpha
     xnu = phys_h * nu / phys_k / Td
     return xnu^(T(4) + model.shang_beta) / expm1(xnu) / nu / model.shang_I0
 end
-
+function nu2theta(nu::T, z::T, model::AbstractCIBModel) where {T}
+    phys_h = T(6.62606957e-27)   # erg.s
+    phys_k = T(1.3806488e-16)    # erg/K
+    Td = model.shang_Td * (one(T) + z)^model.shang_alpha
+    xnu = phys_h * nu / phys_k / Td
+    return xnu^(T(4) + model.shang_beta) / expm1(xnu) / nu / model.shang_I0*Td^(T(4) + model.shang_beta)
+end
 """
 <L_sat> interpolation values
 """
